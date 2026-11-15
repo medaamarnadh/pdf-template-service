@@ -1,0 +1,40 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+  packages: write
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: 10.0.x }
+      - run: dotnet test -c Release
+      - name: Publish self-contained builds
+        run: |
+          for rid in linux-x64 win-x64; do
+            dotnet publish src/PdfFill.Api/PdfFill.Api.csproj -c Release -r $rid --self-contained -o publish/$rid
+            (cd publish && zip -qr pdf-template-service-${GITHUB_REF_NAME}-$rid.zip $rid)
+          done
+      - uses: docker/setup-qemu-action@v4
+      - uses: docker/setup-buildx-action@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with: { registry: ghcr.io, username: "${{ github.actor }}", password: "${{ secrets.GITHUB_TOKEN }}" }
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64      # arm64 for Oracle Ampere A1 always-free VMs
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/pdf-template-service:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/pdf-template-service:latest
+      - name: GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: publish/*.zip
+          generate_release_notes: true

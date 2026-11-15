@@ -1,0 +1,40 @@
+# Production-ish compose for the Oracle Always Free VM.
+# Caddy terminates TLS (Let's Encrypt) and proxies to the API container; data lives on the VM disk under ./data.
+services:
+  pdf-engine:
+    image: ghcr.io/medaamarnadh/pdf-template-service:latest
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__File: /data/poc.db
+      Database__RecreateOnStartup: "false"
+      Docs__ExposeInternal: "false"
+      Auth__JwtKey: "${JWT_KEY:?set JWT_KEY in .env (openssl rand -base64 48)}"
+      RateLimiting__ApiPerMinute: "300"
+      RateLimiting__RenderPerMinute: "60"
+      RateLimiting__RenderConcurrency: "4"      # 4 Arm cores; keep headroom for Caddy
+    volumes:
+      - ./data:/data
+    expose: ["8080"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits: { memory: 2g }
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [pdf-engine]
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,76 @@
+@base = http://localhost:5080/api/v1
+@portalToken = paste-a-login-token-here
+@apiKey = pdfk_live_paste-a-key-here
+@applicationId = paste-an-application-uuid
+@templateId = paste-a-template-uuid
+
+### List templates in an application
+GET {{base}}/templates?applicationId={{applicationId}}
+Authorization: Bearer {{portalToken}}
+
+### Upload a template (multipart)
+POST {{base}}/templates
+Authorization: Bearer {{portalToken}}
+Content-Type: multipart/form-data; boundary=----b
+------b
+Content-Disposition: form-data; name="applicationId"
+
+{{applicationId}}
+------b
+Content-Disposition: form-data; name="file"; filename="grant_application.pdf"
+Content-Type: application/pdf
+
+< ./Templates/grant_application.pdf
+------b--
+
+### Template detail (fields + mapping)
+GET {{base}}/templates/{{templateId}}
+Authorization: Bearer {{portalToken}}
+
+### Save mapping
+PUT {{base}}/templates/{{templateId}}/mapping
+Authorization: Bearer {{portalToken}}
+Content-Type: application/json
+
+< ./Templates/grant_application.mapping.json
+
+### Render a PDF with an API key
+POST http://localhost:5080/api/v1/render
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "application_id": "{{applicationId}}",
+  "template_id": "{{templateId}}",
+  "options": { "strict": true, "read_only": false },
+  "data": { "business_name": "Acme Manufacturing", "project_type": "New" }
+}
+
+### Validate a payload without rendering (same body, X-Api-Key form)
+POST http://localhost:5080/api/v1/validate
+X-Api-Key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "application_id": "{{applicationId}}",
+  "template_id": "{{templateId}}",
+  "data": { "business_name": "Acme Manufacturing" }
+}
+
+### Create an application (portal token)
+POST http://localhost:5080/api/v1/applications
+Authorization: Bearer {{portalToken}}
+Content-Type: application/json
+
+{ "name": "Payroll" }
+
+### Create an API key assigned to it - the secret is returned once
+POST http://localhost:5080/api/v1/keys
+Authorization: Bearer {{portalToken}}
+Content-Type: application/json
+
+{ "name": "Backend integration", "application_ids": ["{{applicationId}}"] }
+
+### Render from the POC business data
+POST http://localhost:5080/api/v1/grant-applications/5001/render?templateId={{templateId}}&readOnly=false
+Authorization: Bearer {{portalToken}}

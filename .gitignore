@@ -1,0 +1,13 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+output/*.pdf
+!output/sample_*.pdf
+src/PdfFill.Api/Data/poc.db*
+TestResults/
+__pycache__/
+src/PdfFill.Api/wwwroot/
+deploy/oracle/.env
+.env

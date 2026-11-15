@@ -1,0 +1,428 @@
+{
+  "template": "grant_application.pdf",
+  "version": 2,
+  "fields": {
+    "address": {
+      "field": "Address",
+      "type": "text",
+      "maxLength": 100
+    },
+    "applicant_name": {
+      "field": [
+        "Applicant_Name",
+        "Applicant_Name_P2",
+        "Applicant_Name_P3"
+      ],
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "application_no": {
+      "field": [
+        "Application_No",
+        "Application_No_P2",
+        "Application_No_P3"
+      ],
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "budget": {
+      "type": "table",
+      "rows": 8,
+      "columns": {
+        "category": "Budget{n}_Category",
+        "requested": "Budget{n}_Requested",
+        "match": "Budget{n}_Match",
+        "justification": "Budget{n}_Justification"
+      }
+    },
+    "business_name": {
+      "field": "Business_Name",
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "chk_audit": {
+      "field": "Chk_Audit",
+      "type": "checkbox"
+    },
+    "chk_insurance": {
+      "field": "Chk_Insurance",
+      "type": "checkbox"
+    },
+    "chk_nodebarment": {
+      "field": "Chk_NoDebarment",
+      "type": "checkbox"
+    },
+    "chk_registered": {
+      "field": "Chk_Registered",
+      "type": "checkbox"
+    },
+    "chk_reporting": {
+      "field": "Chk_Reporting",
+      "type": "checkbox"
+    },
+    "chk_taxes": {
+      "field": "Chk_Taxes",
+      "type": "checkbox"
+    },
+    "city": {
+      "field": "City",
+      "type": "text",
+      "maxLength": 100
+    },
+    "contact_name": {
+      "field": "Contact_Name",
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "contact_title": {
+      "field": "Contact_Title",
+      "type": "text",
+      "maxLength": 100
+    },
+    "ein": {
+      "field": "Ein",
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "email": {
+      "field": "Email",
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "employees_ft": {
+      "field": "Employees_Ft",
+      "type": "text",
+      "maxLength": 100
+    },
+    "employees_pt": {
+      "field": "Employees_Pt",
+      "type": "text",
+      "maxLength": 100
+    },
+    "entity_corp": {
+      "field": "Entity_Corp",
+      "type": "checkbox"
+    },
+    "entity_llc": {
+      "field": "Entity_Llc",
+      "type": "checkbox"
+    },
+    "entity_nonprofit": {
+      "field": "Entity_Nonprofit",
+      "type": "checkbox"
+    },
+    "entity_partnership": {
+      "field": "Entity_Partnership",
+      "type": "checkbox"
+    },
+    "entity_soleprop": {
+      "field": "Entity_SoleProp",
+      "type": "checkbox"
+    },
+    "growth_pct": {
+      "field": "Growth_Pct",
+      "type": "text",
+      "maxLength": 100
+    },
+    "jobs_created": {
+      "field": "Jobs_Created",
+      "type": "text",
+      "maxLength": 100
+    },
+    "match_pct": {
+      "field": "Match_Pct",
+      "type": "text",
+      "maxLength": 100
+    },
+    "minority_owned": {
+      "field": "Minority_Owned",
+      "type": "radio",
+      "values": [
+        "Yes",
+        "No"
+      ]
+    },
+    "naics": {
+      "field": "Naics",
+      "type": "text",
+      "maxLength": 100
+    },
+    "phone": {
+      "field": "Phone",
+      "type": "text",
+      "maxLength": 100
+    },
+    "project_end": {
+      "field": "Project_End",
+      "type": "text",
+      "maxLength": 100,
+      "format": "date:MM/dd/yyyy"
+    },
+    "project_impact": {
+      "field": "Project_Impact",
+      "type": "text",
+      "maxLength": 2000
+    },
+    "project_months": {
+      "field": "Project_Months",
+      "type": "text",
+      "maxLength": 100
+    },
+    "project_start": {
+      "field": "Project_Start",
+      "type": "text",
+      "maxLength": 100,
+      "format": "date:MM/dd/yyyy"
+    },
+    "project_summary": {
+      "field": "Project_Summary",
+      "type": "text",
+      "maxLength": 2000
+    },
+    "project_title": {
+      "field": "Project_Title",
+      "type": "text",
+      "maxLength": 100,
+      "required": true
+    },
+    "project_type": {
+      "field": "Project_Type",
+      "type": "radio",
+      "values": [
+        "New",
+        "Expansion"
+      ]
+    },
+    "rev_fy1_label": {
+      "field": "Rev_FY1_Label",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy1_q1": {
+      "field": "Rev_FY1_Q1",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy1_q2": {
+      "field": "Rev_FY1_Q2",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy1_q3": {
+      "field": "Rev_FY1_Q3",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy1_q4": {
+      "field": "Rev_FY1_Q4",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy1_total": {
+      "field": "Rev_FY1_Total",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_label": {
+      "field": "Rev_FY2_Label",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_q1": {
+      "field": "Rev_FY2_Q1",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_q2": {
+      "field": "Rev_FY2_Q2",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_q3": {
+      "field": "Rev_FY2_Q3",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_q4": {
+      "field": "Rev_FY2_Q4",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy2_total": {
+      "field": "Rev_FY2_Total",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_label": {
+      "field": "Rev_FY3_Label",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_q1": {
+      "field": "Rev_FY3_Q1",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_q2": {
+      "field": "Rev_FY3_Q2",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_q3": {
+      "field": "Rev_FY3_Q3",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_q4": {
+      "field": "Rev_FY3_Q4",
+      "type": "text",
+      "maxLength": 100
+    },
+    "rev_fy3_total": {
+      "field": "Rev_FY3_Total",
+      "type": "text",
+      "maxLength": 100
+    },
+    "review_decision": {
+      "field": "Review_Decision",
+      "type": "radio",
+      "values": [
+        "Approve",
+        "Defer",
+        "Decline"
+      ]
+    },
+    "review_score": {
+      "field": "Review_Score",
+      "type": "text",
+      "maxLength": 100
+    },
+    "reviewer_notes": {
+      "field": "Reviewer_Notes",
+      "type": "text",
+      "maxLength": 2000
+    },
+    "rural_location": {
+      "field": "Rural_Location",
+      "type": "radio",
+      "values": [
+        "Yes",
+        "No"
+      ]
+    },
+    "sig_applicant": {
+      "field": "Sig_Applicant",
+      "type": "image",
+      "imageTypes": [
+        "png",
+        "jpeg"
+      ],
+      "maxKb": 500,
+      "required": true
+    },
+    "sig_applicant_date": {
+      "field": "Sig_Applicant_Date",
+      "type": "text",
+      "maxLength": 100,
+      "format": "date:MM/dd/yyyy"
+    },
+    "sig_applicant_name": {
+      "field": "Sig_Applicant_Name",
+      "type": "text",
+      "maxLength": 100
+    },
+    "sig_preparer": {
+      "field": "Sig_Preparer",
+      "type": "image",
+      "imageTypes": [
+        "png",
+        "jpeg"
+      ],
+      "maxKb": 500
+    },
+    "sig_preparer_date": {
+      "field": "Sig_Preparer_Date",
+      "type": "text",
+      "maxLength": 100,
+      "format": "date:MM/dd/yyyy"
+    },
+    "sig_preparer_name": {
+      "field": "Sig_Preparer_Name",
+      "type": "text",
+      "maxLength": 100
+    },
+    "sig_reviewer": {
+      "field": "Sig_Reviewer",
+      "type": "image",
+      "imageTypes": [
+        "png",
+        "jpeg"
+      ],
+      "maxKb": 500
+    },
+    "sig_reviewer_date": {
+      "field": "Sig_Reviewer_Date",
+      "type": "text",
+      "maxLength": 100,
+      "format": "date:MM/dd/yyyy"
+    },
+    "sig_reviewer_name": {
+      "field": "Sig_Reviewer_Name",
+      "type": "text",
+      "maxLength": 100
+    },
+    "source": {
+      "type": "table",
+      "rows": 4,
+      "columns": {
+        "name": "Source{n}_Name",
+        "amount": "Source{n}_Amount",
+        "secured": "Source{n}_Secured"
+      }
+    },
+    "state": {
+      "field": "State",
+      "type": "text",
+      "maxLength": 100
+    },
+    "total_match": {
+      "field": "Total_Match",
+      "type": "text",
+      "maxLength": 100
+    },
+    "total_requested": {
+      "field": "Total_Requested",
+      "type": "text",
+      "maxLength": 100
+    },
+    "veteran_owned": {
+      "field": "Veteran_Owned",
+      "type": "radio",
+      "values": [
+        "Yes",
+        "No"
+      ]
+    },
+    "website": {
+      "field": "Website",
+      "type": "text",
+      "maxLength": 100
+    },
+    "year_established": {
+      "field": "Year_Established",
+      "type": "text",
+      "maxLength": 100
+    },
+    "zip": {
+      "field": "Zip",
+      "type": "text",
+      "maxLength": 100
+    }
+  }
+}

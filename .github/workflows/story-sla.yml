@@ -1,0 +1,26 @@
+name: Story SLA
+on:
+  schedule: [{ cron: "0 8 * * 1" }]     # Mondays 08:00 UTC
+  workflow_dispatch:
+permissions: { issues: write, contents: read }
+jobs:
+  report:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: { python-version: "3.12" }
+      - id: report
+        run: |
+          python .github/scripts/story_sla.py > report.md || echo "overdue=true" >> "$GITHUB_OUTPUT"
+          cat report.md
+      - name: Open or update the SLA issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs'); const body = fs.readFileSync('report.md', 'utf8');
+            const title = 'Story SLA report';
+            const { data: issues } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', labels: 'sla' });
+            const existing = issues.find(i => i.title === title);
+            if (existing) await github.rest.issues.update({ ...context.repo, issue_number: existing.number, body });
+            else await github.rest.issues.create({ ...context.repo, title, body, labels: ['sla'] });

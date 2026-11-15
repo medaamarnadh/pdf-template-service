@@ -1,0 +1,11 @@
+# Replace with your DNS name (an A record pointing at the VM's public IP). Caddy fetches and renews the certificate.
+# For an IP-only setup without TLS, use ":80" instead of the domain.
+pdf.example.com {
+    encode gzip
+    reverse_proxy pdf-engine:8080
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+    }
+}

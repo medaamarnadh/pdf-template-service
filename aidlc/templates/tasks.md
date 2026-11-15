@@ -1,0 +1,6 @@
+# <Feature> — Tasks
+
+Each task: one PR, ≤ 1 day, names the files it touches and the test that proves it.
+
+- [ ] **T1** <task> — files: … — test: …
+- [ ] **T2** …

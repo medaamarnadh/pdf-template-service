@@ -1,0 +1,8 @@
+services:
+  pdf-engine:
+    build: .
+    image: ghcr.io/medaamarnadh/pdf-template-service:local
+    ports: ["8080:8080"]
+    volumes: ["./data:/data"]
+    environment:
+      Database__RecreateOnStartup: "false"    # data persists in ./data across restarts; to reset, stop the stack and delete ./data
