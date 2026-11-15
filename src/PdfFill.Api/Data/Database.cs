@@ -40,6 +40,11 @@ public sealed class Database(IConfiguration cfg, IWebHostEnvironment env)
                 cmd.CommandText = File.ReadAllText(Path.Combine(dir, script));
                 cmd.ExecuteNonQuery();
             }
+            // Demo instances share the seeded account, and password changes are refused there, so the
+            // forced-rotation flag would be a dead end for every visitor.
+            if (cfg.GetValue("Demo:Enabled", false))
+                c.Execute("UPDATE users SET must_change_password = 0");
+
             return;                                                 // schema.sql already declares the current user_version
         }
 

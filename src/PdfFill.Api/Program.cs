@@ -116,6 +116,7 @@ auth.MapPost("/change-password", async (ChangePasswordRequest req, System.Securi
 {
     var id = u.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value ?? u.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     try { return await svc.ChangePasswordAsync(id!, req.CurrentPassword, req.NewPassword) ? Results.NoContent() : Results.Json(new { code = "invalid_credentials", title = "Current password is wrong", status = 401 }, statusCode: 401); }
+    catch (DemoModeException ex) { return Results.Json(new { code = "demo_disabled", title = ex.Message, status = 403 }, statusCode: 403); }
     catch (ArgumentException ex) { return Results.BadRequest(new { code = "weak_password", error = ex.Message }); }
 }).RequireAuthorization("Portal");
 

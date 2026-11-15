@@ -42,7 +42,20 @@ docker compose logs -f pdf-engine       # wait for "Now listening"
 Check: `https://<your-dns-name>/docs` (public API reference) and `/` (portal). The published image is multi-arch, so
 `docker compose pull` picks the arm64 layer automatically.
 
-## 5. Update to a new release
+## 5. Running it as a public demo
+Set `Demo__Enabled: "true"` in the compose environment. The seeded account then skips the forced password
+rotation and refuses password changes, so a shared login survives repeated visitors.
+
+Demo mode does not make anything else read-only: a visitor can still create, edit and delete applications,
+templates and keys. Reset the data on a schedule so the demo stays presentable - set
+`Database__RecreateOnStartup: "true"` and restart nightly:
+```bash
+0 4 * * * cd ~/pdf-template-service && docker compose restart pdf-engine
+```
+Mind the trade: with `RecreateOnStartup` true, every restart wipes the database, so never combine it with a
+deployment you care about keeping.
+
+## 6. Update to a new release
 
 **Back up first — this is not optional.** The first start of a release that ships a schema migration rewrites
 `poc.db` in place (e.g. every template gets re-keyed to a UUID) and cannot be undone. An older image will not
@@ -57,17 +70,17 @@ curl -fsS http://localhost:8080/health   # confirm status "healthy" and the sche
 Roll back by stopping the stack, copying `data/poc.db.pre-upgrade-<date>` back over `data/poc.db`, and starting
 the previous image tag — pin a tag in `docker-compose.yml` (`:v0.2.0`) for controlled upgrades either way.
 
-## 6. Data and backups
+## 7. Data and backups
 - SQLite file and rendered outputs live in `~/pdf-template-service/data` (mounted at `/data`).
 - Backup nightly with cron: `0 3 * * * sqlite3 ~/pdf-template-service/data/poc.db ".backup ~/backups/poc-$(date +\%F).db"` (install `sqlite3`), and copy `~/backups` to Oracle Object Storage (10 GB free) with the OCI CLI.
 - Restore: stop the stack, replace `data/poc.db`, start.
 
-## 7. Keep it free
+## 8. Keep it free
 - Stay on A1.Flex within 4 OCPU / 24 GB total and ≤ 200 GB block storage.
 - Oracle reclaims **idle** Always Free instances (very low CPU/network for 7 days). A weekly render or the health check traffic keeps it active; if reclaimed, recreate from this runbook — data is on the boot volume only if you keep the volume, so take backups.
 - Do not upgrade the account to paid unless you want to; an upgraded account keeps Always Free resources free.
 
-## 8. Operations
+## 9. Operations
 | Task | Command |
 |---|---|
 | Logs | `docker compose logs -f pdf-engine` |

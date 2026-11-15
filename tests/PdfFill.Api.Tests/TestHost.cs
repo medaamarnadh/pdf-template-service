@@ -16,8 +16,12 @@ public sealed class TestHost : WebApplicationFactory<Program>
     public const string SecondUserEmail = "other@example.com";
     private const string SecondUserPassword = "Other-User-Seed-2026!";
 
+    /// <summary>Set when constructing the fixture to run this host as a public demo instance.</summary>
+    public bool Demo { get; init; }
+
     protected override void ConfigureWebHost(IWebHostBuilder b)
     {
+        b.UseSetting("Demo:Enabled", Demo ? "true" : "false");
         b.UseSetting("Database:File", _dbFile);
         b.UseSetting("Database:RecreateOnStartup", "true");
         b.UseSetting("Auth:JwtKey", "unit-test-key-0123456789abcdef0123456789abcdef");

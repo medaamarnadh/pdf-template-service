@@ -198,6 +198,11 @@ it is authorized against applications the signed-in user owns, not against a key
 - `Auth:JwtKey` (env `Auth__JwtKey`) must be a random string ≥ 32 characters; Development has a dev-only key,
   production refuses to start without one.
 - Login attempts are rate-limited per IP (`RateLimiting:AuthPerMinute`, default 10).
+- `Demo:Enabled` (env `Demo__Enabled`) runs the instance as a public demo: the seeded account keeps its
+  `must_change_password` flag cleared and `auth/change-password` answers `403 demo_disabled`, so one shared
+  login keeps working for every visitor instead of the first one locking out the rest. Leave it `false`
+  anywhere real. It does not restrict anything else, so a demo instance should also reset its data - see
+  the deploy runbook.
 - Portal auth errors: `401 unauthorized` (no/invalid token), `401 invalid_credentials`, `400 weak_password`.
 - API key errors on render/validate: `401 key_invalid`, `401 key_revoked`, `403 key_not_allocated` — see the
   table above.

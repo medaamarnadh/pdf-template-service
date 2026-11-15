@@ -13,12 +13,16 @@ public sealed record User(string Id, string Email, string PasswordHash, string R
 public sealed record LoginRequest(string Email, string Password);
 public sealed record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 
+/// <summary>Thrown when an action is disabled because the instance runs as a public demo.</summary>
+public sealed class DemoModeException(string message) : Exception(message);
+
 /// <summary>Email + password login issuing a signed JWT (HS256). Users live in the SQLite users table.</summary>
 public sealed class AuthService(Database db, IConfiguration cfg)
 {
     public static readonly string[] Roles = ["owner", "admin", "developer", "viewer"];
     private readonly string _issuer = cfg["Auth:Issuer"] ?? "pdf-template-service";
     private readonly int _hours = cfg.GetValue("Auth:TokenHours", 12);
+    private readonly bool _demo = cfg.GetValue("Demo:Enabled", false);
 
     private byte[] Key()
     {
@@ -52,6 +56,8 @@ public sealed class AuthService(Database db, IConfiguration cfg)
 
     public async Task<bool> ChangePasswordAsync(string userId, string current, string next)
     {
+        // A public demo shares one account: letting any visitor change the password would lock out everyone after them.
+        if (_demo) throw new DemoModeException("Password changes are disabled on the public demo instance.");
         using var c = db.Open();
         var hash = await c.QuerySingleOrDefaultAsync<string>("SELECT password_hash FROM users WHERE user_id = @id", new { id = userId });
         if (hash is null || !PasswordHasher.Verify(current, hash)) return false;
