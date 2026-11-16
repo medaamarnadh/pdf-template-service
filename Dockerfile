@@ -14,8 +14,12 @@ COPY src/PdfFill.Api/PdfFill.Api.csproj src/PdfFill.Api/
 COPY tests/PdfFill.Api.Tests/PdfFill.Api.Tests.csproj tests/PdfFill.Api.Tests/
 RUN dotnet restore
 COPY . .
-RUN dotnet test -c Release --no-restore
-RUN dotnet publish src/PdfFill.Api/PdfFill.Api.csproj -c Release -o /app --no-restore
+# Restore ran above only to warm the package cache as a cacheable layer. test and publish deliberately
+# restore again rather than passing --no-restore: that flag asserts the earlier restore output still
+# matches the tree brought in by `COPY . .`, and a publish failing on a package restore had already
+# resolved is very hard to diagnose. The packages are cached, so this costs re-evaluation, not downloads.
+RUN dotnet test -c Release
+RUN dotnet publish src/PdfFill.Api/PdfFill.Api.csproj -c Release -o /app
 
 # ---- Runtime: one container serves the API and the portal ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
