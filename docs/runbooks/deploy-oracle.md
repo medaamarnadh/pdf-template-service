@@ -10,30 +10,33 @@ Cost: $0. A card is required at signup for a small verification hold.
 3. Networking → your VCN → Subnet → **Security List** → add ingress rules: TCP 80 and TCP 443 from 0.0.0.0/0 (22 is already open).
 4. Optional: reserve the public IP (Networking → Reserved IPs) so it survives instance recreation, and create a DNS A record `pdf.example.com → <ip>`.
 
-## 2. Publish an image first (once per release)
-The compose file pulls `ghcr.io/medaamarnadh/pdf-template-service:latest`, which exists only after a release tag is
-pushed — CI builds the image but discards it. Cut a release before deploying:
+## 2. The image (already published)
+The compose file pulls `ghcr.io/medaamarnadh/pdf-template-service:latest`. That image exists: `v0.1.0` is released,
+and both `:v0.1.0` and `:latest` carry a multi-arch index with `linux/amd64` and `linux/arm64`, so the VM gets the
+arm64 variant without any extra flags.
+
+The package inherits the repository's public visibility, so the VM pulls it anonymously — no `docker login` and no
+visibility change needed. Nothing secret is baked in; `JWT_KEY` arrives at runtime from `.env`.
+
+Later releases are cut the same way (CI builds an image and discards it, so only a tag publishes one):
 ```bash
-git tag v0.1.0 && git push origin v0.1.0     # runs release.yml (~15-20 min; arm64 builds under QEMU)
+git tag v0.2.0 && git push origin v0.2.0     # runs release.yml (~15-20 min; arm64 builds under QEMU)
 ```
-Then make the package pullable from the VM: GitHub → Profile → Packages → `pdf-template-service` → Package settings →
-**Change visibility → Public**. The image contains no secrets (`JWT_KEY` is injected at runtime from `.env`) and the
-source repo stays private. To keep the package private instead, run `docker login ghcr.io -u <user>` on the VM with a
-PAT scoped `read:packages` before `docker compose pull`.
 
 ## 3. Prepare the VM (once)
-The repo is **private**, so an unauthenticated `git clone` on the VM fails. Copy the three files it needs instead:
 ```bash
-# from your workstation, inside the repo
-scp deploy/oracle/setup.sh deploy/oracle/docker-compose.yml deploy/oracle/Caddyfile ubuntu@<ip>:~
-ssh ubuntu@<ip> 'bash ~/setup.sh'
-ssh ubuntu@<ip>                  # re-login picks up the docker group
+ssh ubuntu@<ip>
+git clone https://github.com/medaamarnadh/pdf-template-service.git
+bash pdf-template-service/deploy/oracle/setup.sh
+exit && ssh ubuntu@<ip>          # re-login picks up the docker group
 ```
+`setup.sh` installs Docker and opens 80/443 in the VM's own iptables - Oracle's images drop those ports even once
+the cloud Security List allows them, so both layers have to be opened.
 
 ## 4. Deploy
 ```bash
-mv ~/docker-compose.yml ~/Caddyfile ~/pdf-template-service/
 cd ~/pdf-template-service
+cp deploy/oracle/docker-compose.yml deploy/oracle/Caddyfile .
 echo "JWT_KEY=$(openssl rand -base64 48)" > .env            # portal token signing key, keep private
 sed -i 's/pdf.example.com/<your-dns-name>/' Caddyfile      # or ":80" for IP-only, no TLS
 docker compose pull && docker compose up -d
